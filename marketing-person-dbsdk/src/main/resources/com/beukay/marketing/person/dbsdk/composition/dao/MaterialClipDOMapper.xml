@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.MaterialClipDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.MaterialClipDO">
+        <id     column="id"                 property="id"/>
+        <result column="oss_key"            property="ossKey"/>
+        <result column="kind"               property="kind"/>
+        <result column="original_name"      property="originalName"/>
+        <result column="duration_ms"        property="durationMs"/>
+        <result column="width"              property="width"/>
+        <result column="height"             property="height"/>
+        <result column="fps"                property="fps"/>
+        <result column="bitrate"            property="bitrate"/>
+        <result column="file_size"          property="fileSize"/>
+        <result column="sha256"             property="sha256"/>
+        <result column="source_type"        property="sourceType"/>
+        <result column="source_extra"       property="sourceExtra"/>
+        <result column="category"           property="category"/>
+        <result column="tags_cache"         property="tagsCache"/>
+        <result column="nezha_tenant_code"  property="nezhaTenantCode"/>
+        <result column="is_deleted"         property="isDeleted"/>
+        <result column="create_at"          property="createAt"/>
+        <result column="create_by"          property="createBy"/>
+        <result column="create_name"        property="createName"/>
+        <result column="update_at"          property="updateAt"/>
+        <result column="update_by"          property="updateBy"/>
+        <result column="update_name"        property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, oss_key, kind, original_name, duration_ms, width, height, fps, bitrate, file_size,
+        sha256, source_type, source_extra, category, tags_cache,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO material_clip
+            (oss_key, kind, original_name, duration_ms, width, height, fps, bitrate, file_size,
+             sha256, source_type, source_extra, category, tags_cache,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{ossKey}, #{kind}, #{originalName}, #{durationMs}, #{width}, #{height}, #{fps}, #{bitrate}, #{fileSize},
+             #{sha256}, #{sourceType}, #{sourceExtra}, #{category}, #{tagsCache},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM material_clip
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectBySha256" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM material_clip
+        WHERE is_deleted = 0 AND sha256 = #{sha256}
+        LIMIT 1
+    </select>
+
+    <sql id="PageWhere">
+        WHERE m.is_deleted = 0
+        <if test="kind != null and kind != ''">
+            AND m.kind = #{kind}
+        </if>
+        <if test="name != null and name != ''">
+            AND m.original_name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="sourceType != null and sourceType != ''">
+            AND m.source_type = #{sourceType}
+        </if>
+        <if test="category != null and category != ''">
+            <choose>
+                <when test='"__UNCATEGORIZED__".equals(category)'>
+                    AND (m.category IS NULL OR m.category = '')
+                </when>
+                <otherwise>
+                    AND m.category = #{category}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="tagIds != null and tagIds.size() > 0">
+            AND EXISTS (
+                SELECT 1 FROM material_clip_tag t
+                WHERE t.is_deleted = 0
+                  AND t.clip_id = m.id
+                  AND t.tag_id IN
+                  <foreach collection="tagIds" item="tid" open="(" separator="," close=")">#{tid}</foreach>
+            )
+        </if>
+    </sql>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM material_clip m
+        <include refid="PageWhere"/>
+        ORDER BY m.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="long">
+        SELECT COUNT(*)
+        FROM material_clip m
+        <include refid="PageWhere"/>
+    </select>
+
+    <update id="updateTagsCache">
+        UPDATE material_clip
+        SET tags_cache = #{tagsCache}, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE material_clip
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+</mapper>

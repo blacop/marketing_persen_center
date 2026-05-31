@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.dao.KolPersonDOMapper">
+
+  <!-- 自定义分页查询 -->
+  <select id="listPage" resultType="com.beukay.marketing.person.dbsdk.model.KolPersonDO">
+    select
+      id, is_deleted, nezha_tenant_code, name, description, status,
+      create_at, create_by, create_name, update_at, update_by, update_name
+    from kol_person
+    where is_deleted = 0
+    <if test="name != null and name != ''">
+      and name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="status != null and status != ''">
+      and status = #{status,jdbcType=VARCHAR}
+    </if>
+    order by id desc
+  </select>
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.CompositionChapterDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.CompositionChapterDO">
+        <id     column="id"                      property="id"/>
+        <result column="project_id"              property="projectId"/>
+        <result column="sort_no"                 property="sortNo"/>
+        <result column="name"                    property="name"/>
+        <result column="category"                property="category"/>
+        <result column="audio_mode"              property="audioMode"/>
+        <result column="voiceover_id"            property="voiceoverId"/>
+        <result column="voiceover_ids"           property="voiceoverIds"/>
+        <result column="fixed_clip_count"        property="fixedClipCount"/>
+        <result column="min_duration_ms"         property="minDurationMs"/>
+        <result column="allow_voiceover_reuse"   property="allowVoiceoverReuse"/>
+        <result column="strip_original_audio"    property="stripOriginalAudio"/>
+        <result column="overflow_trim"           property="overflowTrim"/>
+        <result column="length_adjust_mode"      property="lengthAdjustMode"/>
+        <result column="audio_reuse_mode"        property="audioReuseMode"/>
+        <result column="loop_strategy"           property="loopStrategy"/>
+        <result column="loop_rounds"             property="loopRounds"/>
+        <result column="repeat_rate"             property="repeatRate"/>
+        <result column="tag_filter"              property="tagFilter"/>
+        <result column="material_clip_ids"       property="materialClipIds"/>
+        <result column="source_folder_name"      property="sourceFolderName"/>
+        <result column="transition_enabled"      property="transitionEnabled"/>
+        <result column="extra"                   property="extra"/>
+        <result column="nezha_tenant_code"       property="nezhaTenantCode"/>
+        <result column="is_deleted"              property="isDeleted"/>
+        <result column="create_at"               property="createAt"/>
+        <result column="create_by"               property="createBy"/>
+        <result column="create_name"             property="createName"/>
+        <result column="update_at"               property="updateAt"/>
+        <result column="update_by"               property="updateBy"/>
+        <result column="update_name"             property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, project_id, sort_no, name, category, audio_mode, voiceover_id, voiceover_ids, fixed_clip_count, min_duration_ms,
+        allow_voiceover_reuse, strip_original_audio, overflow_trim, length_adjust_mode, audio_reuse_mode, loop_strategy, loop_rounds, repeat_rate, tag_filter,
+        material_clip_ids, source_folder_name, transition_enabled, extra,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO composition_chapter
+            (project_id, sort_no, name, category, audio_mode, voiceover_id, voiceover_ids, fixed_clip_count, min_duration_ms,
+             allow_voiceover_reuse, strip_original_audio, overflow_trim, length_adjust_mode, audio_reuse_mode, loop_strategy, loop_rounds, repeat_rate, tag_filter,
+             material_clip_ids, source_folder_name, transition_enabled, extra,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+        <foreach collection="list" item="r" separator=",">
+            (#{r.projectId}, #{r.sortNo}, #{r.name}, #{r.category}, #{r.audioMode}, #{r.voiceoverId}, #{r.voiceoverIds}, #{r.fixedClipCount}, #{r.minDurationMs},
+             #{r.allowVoiceoverReuse}, #{r.stripOriginalAudio}, #{r.overflowTrim}, #{r.lengthAdjustMode}, #{r.audioReuseMode}, #{r.loopStrategy}, #{r.loopRounds}, #{r.repeatRate}, #{r.tagFilter},
+             #{r.materialClipIds}, #{r.sourceFolderName}, #{r.transitionEnabled}, #{r.extra},
+             #{r.nezhaTenantCode}, #{r.isDeleted}, #{r.createAt}, #{r.createBy}, #{r.createName}, #{r.updateAt}, #{r.updateBy}, #{r.updateName})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        UPDATE composition_chapter
+        SET sort_no                = #{sortNo},
+            name                   = #{name},
+            category               = #{category},
+            audio_mode             = #{audioMode},
+            voiceover_id           = #{voiceoverId},
+            voiceover_ids          = #{voiceoverIds},
+            fixed_clip_count       = #{fixedClipCount},
+            min_duration_ms        = #{minDurationMs},
+            allow_voiceover_reuse  = #{allowVoiceoverReuse},
+            strip_original_audio   = #{stripOriginalAudio},
+            overflow_trim          = #{overflowTrim},
+            length_adjust_mode     = #{lengthAdjustMode},
+            audio_reuse_mode       = #{audioReuseMode},
+            loop_strategy          = #{loopStrategy},
+            loop_rounds            = #{loopRounds},
+            repeat_rate            = #{repeatRate},
+            tag_filter             = #{tagFilter},
+            material_clip_ids      = #{materialClipIds},
+            source_folder_name     = #{sourceFolderName},
+            transition_enabled     = #{transitionEnabled},
+            extra                  = #{extra},
+            update_at              = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <select id="selectByProjectId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM composition_chapter
+        WHERE is_deleted = 0 AND project_id = #{projectId}
+        ORDER BY sort_no ASC, id ASC
+    </select>
+
+    <update id="softDeleteNotIn">
+        UPDATE composition_chapter
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND project_id = #{projectId}
+        <if test="keepIds != null and keepIds.size() > 0">
+            AND id NOT IN
+            <foreach collection="keepIds" item="i" open="(" separator="," close=")">#{i}</foreach>
+        </if>
+    </update>
+
+    <update id="softDeleteByProjectId">
+        UPDATE composition_chapter
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND project_id = #{projectId}
+    </update>
+
+</mapper>

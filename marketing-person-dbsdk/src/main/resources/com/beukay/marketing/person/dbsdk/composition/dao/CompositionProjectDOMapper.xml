@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.CompositionProjectDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.CompositionProjectDO">
+        <id     column="id"                       property="id"/>
+        <result column="name"                     property="name"/>
+        <result column="description"              property="description"/>
+        <result column="mode"                     property="mode"/>
+        <result column="chapter_source"           property="chapterSource"/>
+        <result column="combination_strategy"     property="combinationStrategy"/>
+        <result column="target_count"             property="targetCount"/>
+        <result column="global_bgm_voiceover_id"  property="globalBgmVoiceoverId"/>
+        <result column="bgm_voiceover_ids"        property="bgmVoiceoverIds"/>
+        <result column="bgm_loop_mode"            property="bgmLoopMode"/>
+        <result column="bgm_volume"               property="bgmVolume"/>
+        <result column="bgm_start_chapter"        property="bgmStartChapter"/>
+        <result column="output_width"             property="outputWidth"/>
+        <result column="output_height"            property="outputHeight"/>
+        <result column="output_fps"               property="outputFps"/>
+        <result column="status"                   property="status"/>
+        <result column="extra"                    property="extra"/>
+        <result column="nezha_tenant_code"        property="nezhaTenantCode"/>
+        <result column="is_deleted"               property="isDeleted"/>
+        <result column="create_at"                property="createAt"/>
+        <result column="create_by"                property="createBy"/>
+        <result column="create_name"              property="createName"/>
+        <result column="update_at"                property="updateAt"/>
+        <result column="update_by"                property="updateBy"/>
+        <result column="update_name"              property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, description, mode, chapter_source, combination_strategy, target_count,
+        global_bgm_voiceover_id, bgm_voiceover_ids, bgm_loop_mode, bgm_volume, bgm_start_chapter,
+        output_width, output_height, output_fps, status, extra,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO composition_project
+            (name, description, mode, chapter_source, combination_strategy, target_count,
+             global_bgm_voiceover_id, bgm_voiceover_ids, bgm_loop_mode, bgm_volume, bgm_start_chapter,
+             output_width, output_height, output_fps, status, extra,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{name}, #{description}, #{mode}, #{chapterSource}, #{combinationStrategy}, #{targetCount},
+             #{globalBgmVoiceoverId}, #{bgmVoiceoverIds}, #{bgmLoopMode}, #{bgmVolume}, #{bgmStartChapter},
+             #{outputWidth}, #{outputHeight}, #{outputFps}, #{status}, #{extra},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <update id="update">
+        UPDATE composition_project
+        SET name                    = #{name},
+            description             = #{description},
+            mode                    = #{mode},
+            chapter_source          = #{chapterSource},
+            combination_strategy    = #{combinationStrategy},
+            target_count            = #{targetCount},
+            global_bgm_voiceover_id = #{globalBgmVoiceoverId},
+            bgm_voiceover_ids       = #{bgmVoiceoverIds},
+            bgm_loop_mode           = #{bgmLoopMode},
+            bgm_volume              = #{bgmVolume},
+            bgm_start_chapter       = #{bgmStartChapter},
+            output_width            = #{outputWidth},
+            output_height           = #{outputHeight},
+            output_fps              = #{outputFps},
+            status                  = #{status},
+            extra                   = #{extra},
+            update_at               = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM composition_project
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <sql id="PageWhere">
+        WHERE is_deleted = 0
+        <if test="mode != null and mode != ''">
+            AND mode = #{mode}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="chapterSource != null and chapterSource != ''">
+            AND chapter_source = #{chapterSource}
+        </if>
+    </sql>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM composition_project
+        <include refid="PageWhere"/>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="long">
+        SELECT COUNT(*)
+        FROM composition_project
+        <include refid="PageWhere"/>
+    </select>
+
+    <update id="softDelete">
+        UPDATE composition_project
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+</mapper>

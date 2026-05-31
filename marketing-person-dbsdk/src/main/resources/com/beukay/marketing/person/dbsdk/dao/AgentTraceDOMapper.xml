@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.dao.AgentTraceDOMapper">
+
+  <select id="listPage" resultType="com.beukay.marketing.person.dbsdk.model.AgentTraceDO">
+    select
+      id, is_deleted, nezha_tenant_code, name, description, status,
+      trace_id, agent_id, task_description, tool_calls, duration, result, error_msg,
+      trace_type, trace_status, definition_id, registry_id, publish_record_id, start_at, end_at,
+      create_at, create_by, create_name, update_at, update_by, update_name
+    from agent_trace
+    where is_deleted = 0
+    <if test="name != null and name != ''">
+      and name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="status != null and status != ''">
+      and status = #{status,jdbcType=VARCHAR}
+    </if>
+    <if test="agentId != null and agentId != ''">
+      and agent_id = #{agentId,jdbcType=VARCHAR}
+    </if>
+    <if test="traceType != null and traceType != ''">
+      and trace_type = #{traceType,jdbcType=VARCHAR}
+    </if>
+    <if test="traceStatus != null and traceStatus != ''">
+      and trace_status = #{traceStatus,jdbcType=VARCHAR}
+    </if>
+    <if test="definitionId != null">
+      and definition_id = #{definitionId,jdbcType=BIGINT}
+    </if>
+    order by id desc
+  </select>
+
+</mapper>

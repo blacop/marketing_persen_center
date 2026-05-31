@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.beukay</groupId>
+        <artifactId>spring-ai-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>marketing-person-center</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>marketing-person-center</name>
+    <description>Beukay AI MicroServices Application</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <mybatis-starter.version>1.3.1</mybatis-starter.version>
+        <cola.components.version>4.0.1</cola.components.version>
+    </properties>
+
+    <modules>
+        <module>marketing-person-client</module>
+        <module>marketing-person-dbsdk</module>
+        <module>marketing-person-domain</module>
+        <module>marketing-person-infrastructure</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.springframework.retry</groupId>
+                <artifactId>spring-retry</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-entity</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-mybatis</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-exception</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-utils</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-cache</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-webfilter</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>marketing-person-client</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>marketing-person-dbsdk</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>marketing-person-domain</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <!--cola components-->
+            <dependency>
+                <groupId>com.alibaba.cola</groupId>
+                <artifactId>cola-component-dto</artifactId>
+                <version>${cola.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cola</groupId>
+                <artifactId>cola-component-exception</artifactId>
+                <version>${cola.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cola</groupId>
+                <artifactId>cola-component-domain-starter</artifactId>
+                <version>${cola.components.version}</version>
+            </dependency>
+            <!--cola components Ended-->
+            <dependency>
+                <groupId>com.beukay</groupId>
+                <artifactId>ai-holder-starter</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>3.2.1</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

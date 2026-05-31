@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.dao.AgentPublishRecordDOMapper">
+
+  <select id="listPage" resultType="com.beukay.marketing.person.dbsdk.model.AgentPublishRecordDO">
+    select
+      id, is_deleted, nezha_tenant_code, definition_id, definition_version, skill_id,
+      artifact_path, artifact_checksum, publisher_type, publish_status, error_msg,
+      create_at, create_by, create_name, update_at, update_by, update_name
+    from agent_publish_record
+    where is_deleted = 0
+    <if test="definitionId != null">
+      and definition_id = #{definitionId,jdbcType=BIGINT}
+    </if>
+    <if test="publishStatus != null and publishStatus != ''">
+      and publish_status = #{publishStatus,jdbcType=VARCHAR}
+    </if>
+    order by id desc
+  </select>
+
+</mapper>

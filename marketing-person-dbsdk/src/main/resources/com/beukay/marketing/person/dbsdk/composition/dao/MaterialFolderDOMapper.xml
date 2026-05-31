@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.MaterialFolderDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.MaterialFolderDO">
+        <id     column="id"                 property="id"/>
+        <result column="code"               property="code"/>
+        <result column="name"               property="name"/>
+        <result column="sort_no"            property="sortNo"/>
+        <result column="color"              property="color"/>
+        <result column="description"        property="description"/>
+        <result column="ref_audio_oss_key"      property="refAudioOssKey"/>
+        <result column="ref_audio_duration_ms"  property="refAudioDurationMs"/>
+        <result column="ref_audio_filename"     property="refAudioFilename"/>
+        <result column="nezha_tenant_code"  property="nezhaTenantCode"/>
+        <result column="is_deleted"         property="isDeleted"/>
+        <result column="create_at"          property="createAt"/>
+        <result column="create_by"          property="createBy"/>
+        <result column="create_name"        property="createName"/>
+        <result column="update_at"          property="updateAt"/>
+        <result column="update_by"          property="updateBy"/>
+        <result column="update_name"        property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, code, name, sort_no, color, description,
+        ref_audio_oss_key, ref_audio_duration_ms, ref_audio_filename,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO material_folder
+            (code, name, sort_no, color, description,
+             ref_audio_oss_key, ref_audio_duration_ms, ref_audio_filename,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{code}, #{name}, #{sortNo}, #{color}, #{description},
+             #{refAudioOssKey}, #{refAudioDurationMs}, #{refAudioFilename},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM material_folder
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM material_folder
+        WHERE is_deleted = 0 AND code = #{code}
+        LIMIT 1
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM material_folder
+        WHERE is_deleted = 0
+        ORDER BY sort_no ASC, id ASC
+    </select>
+
+    <update id="update">
+        UPDATE material_folder
+        SET name                  = #{name},
+            sort_no               = #{sortNo},
+            color                 = #{color},
+            description           = #{description},
+            ref_audio_oss_key     = #{refAudioOssKey},
+            ref_audio_duration_ms = #{refAudioDurationMs},
+            ref_audio_filename    = #{refAudioFilename},
+            update_at             = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <update id="softDelete">
+        UPDATE material_folder
+        SET is_deleted = 1,
+            code = CONCAT(code, '_deleted_', id),
+            update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+</mapper>

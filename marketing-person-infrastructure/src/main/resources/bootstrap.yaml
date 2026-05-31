@@ -1,0 +1,39 @@
+server:
+  port: ${PORT:30000}
+  shutdown: graceful
+
+CENTER_NACOS_ADDR: ${NACOS_ADDR:mse-1963d6e0-nacos-ans.mse.aliyuncs.com}:8848
+CENTER_NACOS_NAMESPACE: ${NACOS_NAMESPACE:0cd0fad7-79bd-4b8c-9bb2-dbaa7f8393aa}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  lifecycle:
+    timeout-per-shutdown-phase: 1m
+  profiles:
+    active: ${ENVIRONMENT:fat}
+  application:
+    name: marketing-person-center
+  config:
+    import: nacos:marketing-person-center.yaml
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      config:
+        enabled: true
+        server-addr: ${CENTER_NACOS_ADDR}
+        namespace: ${CENTER_NACOS_NAMESPACE}
+        group: default
+        file-extension: yaml
+      discovery:
+        server-addr: ${CENTER_NACOS_ADDR}
+        namespace: ${CENTER_NACOS_NAMESPACE}
+feign:
+  okhttp:
+    enabled: true
+
+logging:
+  config: classpath:log4j2.xml

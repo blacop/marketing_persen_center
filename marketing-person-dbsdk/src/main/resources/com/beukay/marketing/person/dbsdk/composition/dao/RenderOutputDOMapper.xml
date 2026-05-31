@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.RenderOutputDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.RenderOutputDO">
+        <id     column="id"                 property="id"/>
+        <result column="job_id"             property="jobId"/>
+        <result column="project_id"         property="projectId"/>
+        <result column="plan_hash"          property="planHash"/>
+        <result column="plan_snapshot"      property="planSnapshot"/>
+        <result column="oss_key"            property="ossKey"/>
+        <result column="duration_ms"        property="durationMs"/>
+        <result column="width"              property="width"/>
+        <result column="height"             property="height"/>
+        <result column="file_size"          property="fileSize"/>
+        <result column="status"             property="status"/>
+        <result column="error_msg"          property="errorMsg"/>
+        <result column="started_at"         property="startedAt"/>
+        <result column="finished_at"        property="finishedAt"/>
+        <result column="nezha_tenant_code"  property="nezhaTenantCode"/>
+        <result column="is_deleted"         property="isDeleted"/>
+        <result column="create_at"          property="createAt"/>
+        <result column="create_by"          property="createBy"/>
+        <result column="create_name"        property="createName"/>
+        <result column="update_at"          property="updateAt"/>
+        <result column="update_by"          property="updateBy"/>
+        <result column="update_name"        property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, job_id, project_id, plan_hash, plan_snapshot, oss_key,
+        duration_ms, width, height, file_size, status, error_msg,
+        started_at, finished_at,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO render_output
+            (job_id, project_id, plan_hash, plan_snapshot, oss_key,
+             duration_ms, width, height, file_size, status, error_msg,
+             started_at, finished_at,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{jobId}, #{projectId}, #{planHash}, #{planSnapshot}, #{ossKey},
+             #{durationMs}, #{width}, #{height}, #{fileSize}, #{status}, #{errorMsg},
+             #{startedAt}, #{finishedAt},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <update id="update">
+        UPDATE render_output
+        SET plan_snapshot   = #{planSnapshot},
+            oss_key         = #{ossKey},
+            duration_ms     = #{durationMs},
+            width           = #{width},
+            height          = #{height},
+            file_size       = #{fileSize},
+            status          = #{status},
+            error_msg       = #{errorMsg},
+            started_at      = #{startedAt},
+            finished_at     = #{finishedAt},
+            update_at       = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM render_output
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectByJobId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM render_output
+        WHERE is_deleted = 0 AND job_id = #{jobId}
+        ORDER BY id ASC
+    </select>
+
+</mapper>

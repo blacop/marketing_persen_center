@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.RenderJobDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.RenderJobDO">
+        <id     column="id"                  property="id"/>
+        <result column="project_id"          property="projectId"/>
+        <result column="total_count"         property="totalCount"/>
+        <result column="success_count"       property="successCount"/>
+        <result column="failed_count"        property="failedCount"/>
+        <result column="status"              property="status"/>
+        <result column="progress_percent"    property="progressPercent"/>
+        <result column="current_stage"       property="currentStage"/>
+        <result column="error_msg"           property="errorMsg"/>
+        <result column="started_at"          property="startedAt"/>
+        <result column="finished_at"         property="finishedAt"/>
+        <result column="mq_message_id"       property="mqMessageId"/>
+        <result column="render_config_json"  property="renderConfigJson"/>
+        <result column="nezha_tenant_code"   property="nezhaTenantCode"/>
+        <result column="is_deleted"          property="isDeleted"/>
+        <result column="create_at"           property="createAt"/>
+        <result column="create_by"           property="createBy"/>
+        <result column="create_name"         property="createName"/>
+        <result column="update_at"           property="updateAt"/>
+        <result column="update_by"           property="updateBy"/>
+        <result column="update_name"         property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, project_id, total_count, success_count, failed_count, status, progress_percent,
+        current_stage, error_msg, started_at, finished_at, mq_message_id, render_config_json,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO render_job
+            (project_id, total_count, success_count, failed_count, status, progress_percent,
+             current_stage, error_msg, started_at, finished_at, mq_message_id, render_config_json,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{projectId}, #{totalCount}, #{successCount}, #{failedCount}, #{status}, #{progressPercent},
+             #{currentStage}, #{errorMsg}, #{startedAt}, #{finishedAt}, #{mqMessageId}, #{renderConfigJson},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <update id="update">
+        UPDATE render_job
+        SET total_count       = #{totalCount},
+            success_count     = #{successCount},
+            failed_count      = #{failedCount},
+            status            = #{status},
+            progress_percent  = #{progressPercent},
+            current_stage     = #{currentStage},
+            error_msg         = #{errorMsg},
+            started_at        = #{startedAt},
+            finished_at       = #{finishedAt},
+            mq_message_id     = #{mqMessageId},
+            render_config_json = #{renderConfigJson},
+            update_at         = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM render_job
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <sql id="PageWhere">
+        WHERE is_deleted = 0
+        <if test="projectId != null">
+            AND project_id = #{projectId}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+    </sql>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM render_job
+        <include refid="PageWhere"/>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="long">
+        SELECT COUNT(*)
+        FROM render_job
+        <include refid="PageWhere"/>
+    </select>
+
+</mapper>

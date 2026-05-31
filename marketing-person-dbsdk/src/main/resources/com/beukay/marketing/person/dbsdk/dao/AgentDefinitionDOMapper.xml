@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.dao.AgentDefinitionDOMapper">
+
+  <select id="listPage" resultType="com.beukay.marketing.person.dbsdk.model.AgentDefinitionDO">
+    select
+      id, is_deleted, nezha_tenant_code, name, description, status,
+      agent_def_id, behavior_dsl, model_config, business_rules, skill_ids,
+      version, publish_status, last_publish_at, last_publish_by,
+      create_at, create_by, create_name, update_at, update_by, update_name
+    from agent_definition
+    where is_deleted = 0
+    <if test="name != null and name != ''">
+      and name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="status != null and status != ''">
+      and status = #{status,jdbcType=VARCHAR}
+    </if>
+    <if test="publishStatus != null and publishStatus != ''">
+      and publish_status = #{publishStatus,jdbcType=VARCHAR}
+    </if>
+    order by id desc
+  </select>
+
+</mapper>

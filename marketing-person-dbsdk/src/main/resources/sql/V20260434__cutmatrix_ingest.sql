@@ -1,0 +1,32 @@
+-- 视频矩阵 链接抓取任务表（提取视频及文案）
+CREATE TABLE IF NOT EXISTS cm_ingest_task
+(
+    id                BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nezha_tenant_code VARCHAR(64)  NULL,
+    is_deleted        TINYINT(1)   NOT NULL DEFAULT 0,
+    task_code         VARCHAR(64)  NOT NULL COMMENT '任务编码',
+    source_url        VARCHAR(1024) NOT NULL COMMENT '源链接',
+    title             VARCHAR(512) NULL COMMENT '视频标题',
+    cover_asset_code  VARCHAR(64)  NULL COMMENT '封面图 cm_asset',
+    video_asset_code  VARCHAR(64)  NULL COMMENT '视频 cm_asset',
+    audio_asset_code  VARCHAR(64)  NULL COMMENT '音频 cm_asset',
+    duration_sec      DECIMAL(10,3) NULL,
+    width             INT          NULL,
+    height            INT          NULL,
+    quality_label     VARCHAR(32)  NULL COMMENT '720p/1080p/...',
+    download_status   VARCHAR(32)  NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/DOWNLOADING/SUCCEEDED/FAILED',
+    download_error    VARCHAR(2048) NULL,
+    script_text       TEXT         NULL COMMENT '提取文案',
+    script_status     VARCHAR(32)  NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/EXTRACTING/SUCCEEDED/FAILED',
+    script_error      VARCHAR(2048) NULL,
+    auto_strip_emoji  TINYINT(1)   NOT NULL DEFAULT 1,
+    create_at         DATETIME     NULL,
+    create_by         BIGINT       NULL,
+    create_name       VARCHAR(255) NULL,
+    update_at         DATETIME     NULL,
+    update_by         BIGINT       NULL,
+    update_name       VARCHAR(255) NULL,
+    UNIQUE INDEX uk_task_code (task_code),
+    INDEX idx_status (download_status),
+    INDEX idx_created (create_at)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = 'Cutmatrix 链接抓取任务';

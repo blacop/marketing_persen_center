@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.MaterialClipTagDOMapper">
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO material_clip_tag
+            (clip_id, tag_id,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+        <foreach collection="list" item="r" separator=",">
+            (#{r.clipId}, #{r.tagId},
+             #{r.nezhaTenantCode}, #{r.isDeleted}, #{r.createAt}, #{r.createBy}, #{r.createName}, #{r.updateAt}, #{r.updateBy}, #{r.updateName})
+        </foreach>
+    </insert>
+
+    <update id="softDeleteByClipId">
+        UPDATE material_clip_tag
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND clip_id = #{clipId}
+    </update>
+
+    <select id="selectTagIdsByClipId" resultType="long">
+        SELECT tag_id
+        FROM material_clip_tag
+        WHERE is_deleted = 0 AND clip_id = #{clipId}
+    </select>
+
+</mapper>

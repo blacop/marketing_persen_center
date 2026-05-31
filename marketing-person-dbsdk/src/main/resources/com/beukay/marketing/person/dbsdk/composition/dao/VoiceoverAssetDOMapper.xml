@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.beukay.marketing.person.dbsdk.composition.dao.VoiceoverAssetDOMapper">
+
+    <resultMap id="BaseResultMap" type="com.beukay.marketing.person.dbsdk.composition.model.VoiceoverAssetDO">
+        <id     column="id"                 property="id"/>
+        <result column="oss_key"            property="ossKey"/>
+        <result column="source"             property="source"/>
+        <result column="text_content"       property="textContent"/>
+        <result column="voice_code"         property="voiceCode"/>
+        <result column="speed"              property="speed"/>
+        <result column="duration_ms"        property="durationMs"/>
+        <result column="file_size"          property="fileSize"/>
+        <result column="format"             property="format"/>
+        <result column="category"           property="category"/>
+        <result column="nezha_tenant_code"  property="nezhaTenantCode"/>
+        <result column="is_deleted"         property="isDeleted"/>
+        <result column="create_at"          property="createAt"/>
+        <result column="create_by"          property="createBy"/>
+        <result column="create_name"        property="createName"/>
+        <result column="update_at"          property="updateAt"/>
+        <result column="update_by"          property="updateBy"/>
+        <result column="update_name"        property="updateName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, oss_key, source, text_content, voice_code, speed, duration_ms, file_size, format, category,
+        nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO voiceover_asset
+            (oss_key, source, text_content, voice_code, speed, duration_ms, file_size, format, category,
+             nezha_tenant_code, is_deleted, create_at, create_by, create_name, update_at, update_by, update_name)
+        VALUES
+            (#{ossKey}, #{source}, #{textContent}, #{voiceCode}, #{speed}, #{durationMs}, #{fileSize}, #{format}, #{category},
+             #{nezhaTenantCode}, #{isDeleted}, #{createAt}, #{createBy}, #{createName}, #{updateAt}, #{updateBy}, #{updateName})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM voiceover_asset
+        WHERE is_deleted = 0 AND id = #{id}
+        LIMIT 1
+    </select>
+
+    <sql id="PageWhere">
+        WHERE is_deleted = 0
+        <if test="source != null and source != ''">
+            AND source = #{source}
+        </if>
+        <if test="text != null and text != ''">
+            AND text_content LIKE CONCAT('%', #{text}, '%')
+        </if>
+        <if test="category != null and category != ''">
+            <choose>
+                <when test='"__UNCATEGORIZED__".equals(category)'>
+                    AND (category IS NULL OR category = '')
+                </when>
+                <otherwise>
+                    AND category = #{category}
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM voiceover_asset
+        <include refid="PageWhere"/>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPage" resultType="long">
+        SELECT COUNT(*)
+        FROM voiceover_asset
+        <include refid="PageWhere"/>
+    </select>
+
+    <update id="softDelete">
+        UPDATE voiceover_asset
+        SET is_deleted = 1, update_at = CURRENT_TIMESTAMP
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+</mapper>
